@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasePaint Day 456 - Spot the Difference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff88;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00ff88;
+            font-size: 32px;
+        }
+
+        .game-info {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #00ff88;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #00ff88;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .canvas-container {
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #00ff88;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            border: 1px solid #555;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            cursor: crosshair;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            background: #00ff88;
+            color: #1a1a1a;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #00cc6a;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #555;
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .file-inputs {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #00ff88;
+            margin-bottom: 20px;
+        }
+
+        .file-inputs h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        .file-input-group {
+            margin-bottom: 15px;
+        }
+
+        .file-input-group label {
+            display: block;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        input[type="file"] {
+            background: #333;
+            color: #00ff88;
+            padding: 10px;
+            border: 1px solid #00ff88;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            width: 100%;
+        }
+
+        .completion-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .completion-modal.show {
+            display: flex;
+        }
+
+        .completion-content {
+            background: #2a2a2a;
+            border: 3px solid #00ff88;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .completion-content h2 {
+            color: #00ff88;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .completion-content p {
+            color: #ccc;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 BasePaint Day 456 - Spot the Difference</h1>
+
+        <div class="file-inputs" id="file-inputs">
+            <h3>📁 Load Game Files</h3>
+            <div class="file-input-group">
+                <label for="canvas-file">1. Load Canvas Image (day-456.png):</label>
+                <input type="file" id="canvas-file" accept="image/*">
+            </div>
+            <div class="file-input-group">
+                <label for="differences-file">2. Load Differences JSON (day-456-differences.json):</label>
+                <input type="file" id="differences-file" accept=".json">
+            </div>
+        </div>
+
+        <div class="game-info hidden" id="game-info">
+            <div class="info-item">
+                <div class="info-label">Differences Found</div>
+                <div class="info-value" id="found-count">0 / ?</div>
+            </div>
+        </div>
+
+        <div class="canvas-container hidden" id="canvas-container">
+            <canvas id="game-canvas"></canvas>
+        </div>
+
+        <div class="controls hidden" id="controls">
+            <button id="restart-btn">Restart Game</button>
+            <button id="return-overworld-btn">Return to Overworld</button>
+        </div>
+    </div>
+
+    <div class="completion-modal" id="completion-modal">
+        <div class="completion-content">
+            <h2>🎉 Congratulations!</h2>
+            <p>You found all the differences!</p>
+            <button id="play-again-btn">Play Again</button>
+            <button id="return-btn" style="margin-left: 10px;">Return to Overworld</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let canvas, ctx;
+        let canvasImage = null;
+        let differencesData = null;
+        let regionPairs = []; // Changed from regions to regionPairs
+        let foundPairs = new Set(); // Changed from foundRegions to foundPairs
+        let scale = 3;  // 3x upscale for larger display
+
+        // Constants
+        const CANVAS_WIDTH = 256;
+        const CANVAS_HEIGHT = 256;
+        const LEFT_MAX = 126;
+        const RIGHT_MIN = 129;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            canvas = document.getElementById('game-canvas');
+            ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            setupEventListeners();
+            
+            // Auto-load files from expected paths
+            autoLoadFiles();
+        });
+
+        function autoLoadFiles() {
+            // Try to load day-456.png and day-456-differences.json automatically
+            loadImageFromPath('day-456.png', (img) => {
+                canvasImage = img;
+                checkGameReady();
+            });
+
+            fetch('day-456-differences.json')
+                .then(response => response.json())
+                .then(data => {
+                    differencesData = data;
+                    checkGameReady();
+                })
+                .catch(error => {
+                    console.log('Auto-load failed, use file inputs:', error);
+                    // If auto-load fails, user can still use file inputs
+                });
+        }
+
+        function loadImageFromPath(path, callback) {
+            const img = new Image();
+            img.onload = () => callback(img);
+            img.onerror = () => console.log(`Could not auto-load ${path}`);
+            img.src = path;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('canvas-file').addEventListener('change', handleCanvasLoad);
+            document.getElementById('differences-file').addEventListener('change', handleDifferencesLoad);
+            canvas.addEventListener('click', handleCanvasClick);
+            document.getElementById('restart-btn').addEventListener('click', restartGame);
+            document.getElementById('play-again-btn').addEventListener('click', restartGame);
+            document.getElementById('return-btn').addEventListener('click', returnToOverworld);
+            document.getElementById('return-overworld-btn').addEventListener('click', returnToOverworld);
+        }
+
+        function returnToOverworld() {
+            // Navigate back to the canvas navigator
+            window.location.href = 'canvas-navigator.html';
+        }
+
+        function handleCanvasLoad(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    canvasImage = img;
+                    checkGameReady();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleDifferencesLoad(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    differencesData = JSON.parse(event.target.result);
+                    checkGameReady();
+                } catch (error) {
+                    alert('Error loading differences file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function checkGameReady() {
+            if (canvasImage && differencesData) {
+                initializeGame();
+            }
+        }
+
+        function initializeGame() {
+            // Hide file inputs, show game
+            document.getElementById('file-inputs').classList.add('hidden');
+            document.getElementById('game-info').classList.remove('hidden');
+            document.getElementById('canvas-container').classList.remove('hidden');
+            document.getElementById('controls').classList.remove('hidden');
+
+            // Process differences into individual regions first
+            const allRegions = groupPixelsIntoRegions(differencesData.differences);
+            console.log(`Found ${allRegions.length} individual regions`);
+
+            // Pair up left and right regions
+            regionPairs = createRegionPairs(allRegions);
+            console.log(`Found ${regionPairs.length} region pairs`);
+
+            // Update UI with pair count
+            document.getElementById('found-count').textContent = `0 / ${regionPairs.length}`;
+
+            // Setup canvas
+            canvas.width = CANVAS_WIDTH * scale;
+            canvas.height = CANVAS_HEIGHT * scale;
+
+            // Render initial state
+            renderGame();
+        }
+
+        function groupPixelsIntoRegions(pixels) {
+            // Create a 2D grid to track which pixels belong to which region
+            const grid = new Map();
+            pixels.forEach(p => {
+                const key = `${p.x},${p.y}`;
+                grid.set(key, { ...p, regionId: null });
+            });
+
+            const regions = [];
+            let currentRegionId = 0;
+
+            // Flood fill to find connected regions
+            pixels.forEach(pixel => {
+                const key = `${pixel.x},${pixel.y}`;
+                const gridPixel = grid.get(key);
+                
+                if (gridPixel && gridPixel.regionId === null) {
+                    const region = floodFill(grid, pixel.x, pixel.y, currentRegionId);
+                    if (region.length > 0) {
+                        regions.push({
+                            id: currentRegionId,
+                            pixels: region,
+                            side: pixel.side,
+                            center: calculateCenter(region)
+                        });
+                        currentRegionId++;
+                    }
+                }
+            });
+
+            return regions;
+        }
+
+        function floodFill(grid, startX, startY, regionId) {
+            const region = [];
+            const stack = [{x: startX, y: startY}];
+            const visited = new Set();
+
+            while (stack.length > 0) {
+                const {x, y} = stack.pop();
+                const key = `${x},${y}`;
+
+                if (visited.has(key)) continue;
+                visited.add(key);
+
+                const pixel = grid.get(key);
+                if (!pixel || pixel.regionId !== null) continue;
+
+                pixel.regionId = regionId;
+                region.push({x, y});
+
+                // Check 8 neighbors (including diagonals)
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        if (dx === 0 && dy === 0) continue;
+                        stack.push({x: x + dx, y: y + dy});
+                    }
+                }
+            }
+
+            return region;
+        }
+
+        function calculateCenter(pixels) {
+            const sumX = pixels.reduce((sum, p) => sum + p.x, 0);
+            const sumY = pixels.reduce((sum, p) => sum + p.y, 0);
+            return {
+                x: Math.round(sumX / pixels.length),
+                y: Math.round(sumY / pixels.length)
+            };
+        }
+
+        function createRegionPairs(allRegions) {
+            const pairs = [];
+            const usedRegions = new Set();
+
+            // Separate left and right regions
+            const leftRegions = allRegions.filter(r => r.side === 'left');
+            const rightRegions = allRegions.filter(r => r.side === 'right');
+
+            // Match left regions with corresponding right regions
+            leftRegions.forEach(leftRegion => {
+                if (usedRegions.has(leftRegion.id)) return;
+
+                // Calculate expected right position
+                const expectedX = leftRegion.center.x + 129;
+
+                // Find matching right region
+                const rightRegion = rightRegions.find(r => {
+                    if (usedRegions.has(r.id)) return false;
+                    
+                    const xDiff = Math.abs(r.center.x - expectedX);
+                    const yDiff = Math.abs(r.center.y - leftRegion.center.y);
+                    
+                    return xDiff < 10 && yDiff < 10; // Tolerance of 10 pixels
+                });
+
+                if (rightRegion) {
+                    pairs.push({
+                        id: pairs.length,
+                        left: leftRegion,
+                        right: rightRegion
+                    });
+                    usedRegions.add(leftRegion.id);
+                    usedRegions.add(rightRegion.id);
+                }
+            });
+
+            return pairs;
+        }
+
+        function renderGame() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw image
+            ctx.drawImage(canvasImage, 0, 0, canvas.width, canvas.height);
+
+            // Draw checkmarks for found pairs
+            foundPairs.forEach(pairId => {
+                const pair = regionPairs[pairId];
+                if (!pair) return;
+
+                // Draw checkmark on both left and right sides
+                drawCheckmark(pair.left.center.x, pair.left.center.y);
+                drawCheckmark(pair.right.center.x, pair.right.center.y);
+            });
+        }
+
+        function drawCheckmark(x, y) {
+            const scaledX = x * scale;
+            const scaledY = y * scale;
+
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2 * scale;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Draw checkmark (✓)
+            ctx.beginPath();
+            // Left part of check (going down-right)
+            ctx.moveTo(scaledX - 3 * scale, scaledY);
+            ctx.lineTo(scaledX - 1 * scale, scaledY + 2 * scale);
+            // Right part of check (going up-right)
+            ctx.lineTo(scaledX + 3 * scale, scaledY - 2 * scale);
+            ctx.stroke();
+        }
+
+        function handleCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / scale);
+            const y = Math.floor((e.clientY - rect.top) / scale);
+
+            // Find which pair was clicked (could be either left or right side)
+            const clickedPair = findPairAtPoint(x, y);
+            
+            if (clickedPair && !foundPairs.has(clickedPair.id)) {
+                foundPairs.add(clickedPair.id);
+                renderGame();
+                updateScore();
+                checkCompletion();
+            }
+        }
+
+        function findPairAtPoint(x, y) {
+            return regionPairs.find(pair => {
+                // Check if click is in left region
+                const inLeft = pair.left.pixels.some(p => p.x === x && p.y === y);
+                // Check if click is in right region
+                const inRight = pair.right.pixels.some(p => p.x === x && p.y === y);
+                
+                return inLeft || inRight;
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('found-count').textContent = 
+                `${foundPairs.size} / ${regionPairs.length}`;
+        }
+
+        function checkCompletion() {
+            if (foundPairs.size === regionPairs.length) {
+                // Game complete!
+                document.getElementById('completion-modal').classList.add('show');
+            }
+        }
+
+        function restartGame() {
+            // Reset state
+            foundPairs.clear();
+            
+            // Hide completion modal
+            document.getElementById('completion-modal').classList.remove('show');
+            
+            // Re-render
+            renderGame();
+            updateScore();
+        }
+    </script>
+</body>
+</html>

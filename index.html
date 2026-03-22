@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasePaint Games - Explore the World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff88;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            margin-bottom: 40px;
+            color: #aaa;
+        }
+
+        .description {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #00ff88;
+            margin-bottom: 40px;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .description h2 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        .description p {
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        .description ul {
+            color: #ccc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .description li {
+            margin-bottom: 8px;
+        }
+
+        .start-button {
+            background: #00ff88;
+            color: #1a1a1a;
+            border: none;
+            padding: 20px 60px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .start-button:hover {
+            background: #00cc6a;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #00ff88;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 BasePaint Games</h1>
+        <p class="subtitle">Explore a Connected World of Pixel Art</p>
+
+        <div class="description">
+            <h2>About the Game</h2>
+            <p>
+                BasePaint Games is an interconnected world built from 938+ daily CC0 pixel art canvases. 
+                Each canvas is a unique 256×256 pixel artwork that you can explore and navigate.
+            </p>
+
+            <h2>How to Play</h2>
+            <ul>
+                <li><strong>WASD or Arrow Keys</strong> - Move your character</li>
+                <li><strong>Walk through doors</strong> - Enter buildings and discover new areas</li>
+                <li><strong>Explore canvases</strong> - Each area is a unique piece of art</li>
+                <li><strong>Find secrets</strong> - Hidden minigames and interactive elements await</li>
+            </ul>
+
+            <h2>Features</h2>
+            <ul>
+                <li>Animated character with walk cycles</li>
+                <li>Dynamic door animations</li>
+                <li>Multiple interconnected canvases</li>
+                <li>Hidden spot-the-difference minigame</li>
+                <li>Beautiful pixel art from the BasePaint community</li>
+            </ul>
+        </div>
+
+        <a href="canvas-navigator.html" class="start-button">Start Playing →</a>
+
+        <div class="footer">
+            <p>Built with canvases from <a href="https://basepaint.xyz" target="_blank">BasePaint</a></p>
+            <p>All artwork is CC0 (public domain)</p>
+        </div>
+    </div>
+</body>
+</html>

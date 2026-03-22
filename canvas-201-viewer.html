@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasePaint - Canvas 201</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff88;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #00ff88;
+            font-size: 32px;
+        }
+
+        .canvas-container {
+            background: #0a0a0a;
+            padding: 30px;
+            border-radius: 12px;
+            border: 3px solid #00ff88;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        canvas {
+            border: 2px solid #555;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            display: block;
+        }
+
+        button {
+            background: #00ff88;
+            color: #1a1a1a;
+            border: none;
+            padding: 15px 40px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #00cc6a;
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            color: #00ff88;
+            font-size: 24px;
+            padding: 100px;
+        }
+
+        .error {
+            color: #ff4444;
+            font-size: 18px;
+            padding: 50px;
+            background: #2a1a1a;
+            border: 2px solid #ff4444;
+            border-radius: 8px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Interior - Canvas 201</h1>
+        
+        <div id="loading" class="loading">
+            Loading canvas...
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            Failed to load canvas 201. Make sure day-201.png is in the game folder.
+        </div>
+
+        <div id="canvas-container" class="canvas-container" style="display: none;">
+            <canvas id="display-canvas"></canvas>
+        </div>
+
+        <button id="back-btn">← Return to Overworld</button>
+    </div>
+
+    <script>
+        let canvas, ctx;
+        let canvasImage = null;
+        const SCALE = 0.5; // 0.5x - half size (128x128 display)
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            canvas = document.getElementById('display-canvas');
+            ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            document.getElementById('back-btn').addEventListener('click', returnToOverworld);
+
+            // Auto-load canvas 201
+            loadCanvas();
+        });
+
+        function loadCanvas() {
+            const img = new Image();
+            
+            img.onload = () => {
+                canvasImage = img;
+                displayCanvas();
+            };
+
+            img.onerror = () => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            };
+
+            img.src = 'day-201.png';
+        }
+
+        function displayCanvas() {
+            // Hide loading and error, show canvas
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('canvas-container').style.display = 'inline-block';
+
+            // Set canvas size
+            canvas.width = canvasImage.width * SCALE;
+            canvas.height = canvasImage.height * SCALE;
+
+            // Draw the canvas
+            ctx.drawImage(canvasImage, 0, 0, canvas.width, canvas.height);
+        }
+
+        function returnToOverworld() {
+            // Navigate back to the canvas navigator
+            window.location.href = 'canvas-navigator.html';
+        }
+    </script>
+</body>
+</html>

@@ -257,7 +257,7 @@
         
         let player = {
             x: 119,
-            y: 229,
+            y: 226,
             width: 6,      // Sprite is 6px wide
             height: 11,    // Sprite is 11px tall
             collisionWidth: 2,   // Only bottom-center 2 pixels for collision
@@ -330,12 +330,12 @@
 
         function autoLoadFiles() {
             // Try to load day-927.png and day-927-map.png automatically
-            loadImageFromPath('day-927.png', (img) => {
+            loadImageFromPath('assets/day-927.png', (img) => {
                 displayImage = img;
                 checkGameReady();
             });
 
-            loadImageFromPath('day-927-map.png', (img) => {
+            loadImageFromPath('assets/day-927-map.png', (img) => {
                 mapImage = img;
                 
                 // Draw to hidden canvas for pixel reading
@@ -353,7 +353,7 @@
             });
 
             // Load door animation sprite sheet
-            loadImageFromPath('door-spritesheet.png', (img) => {
+            loadImageFromPath('assets/door-spritesheet.png', (img) => {
                 doorSpriteSheet = img;
                 console.log('✅ Door sprite sheet loaded');
                 initializeAnimations();
@@ -915,7 +915,7 @@
 
         function resetPosition() {
             player.x = 119;
-            player.y = 229;
+            player.y = 226;
         }
 
         function toggleDebug() {

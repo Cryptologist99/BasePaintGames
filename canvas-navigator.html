@@ -334,12 +334,12 @@
 
         function autoLoadFiles() {
             // Try to load day-939.png and day-939-map.png automatically
-            loadImageFromPath('day-939.png', (img) => {
+            loadImageFromPath('assets/day-939.png', (img) => {
                 displayImage = img;
                 checkGameReady();
             });
 
-            loadImageFromPath('day-939-map.png', (img) => {
+            loadImageFromPath('assets/day-939-map.png', (img) => {
                 mapImage = img;
                 
                 // Draw to hidden canvas for pixel reading
@@ -351,7 +351,7 @@
             });
 
             // Load player sprite (animated)
-            loadImageFromPath('player-animated.png', (img) => {
+            loadImageFromPath('assets/player-animated.png', (img) => {
                 playerSprite = img;
                 console.log('✅ Player animated sprite loaded');
             });

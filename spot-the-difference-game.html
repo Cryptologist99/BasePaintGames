@@ -257,12 +257,12 @@
 
         function autoLoadFiles() {
             // Try to load day-456.png and day-456-differences.json automatically
-            loadImageFromPath('day-456.png', (img) => {
+            loadImageFromPath('assets/day-456.png', (img) => {
                 canvasImage = img;
                 checkGameReady();
             });
 
-            fetch('day-456-differences.json')
+            fetch('assets/day-456-differences.json')
                 .then(response => response.json())
                 .then(data => {
                     differencesData = data;
